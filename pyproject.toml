@@ -7,21 +7,28 @@ name = "machine-risk-monitor"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
+  "fastapi>=0.115,<1",
   "joblib>=1.4,<2",
+  "jinja2>=3.1,<4",
   "matplotlib>=3.9,<4",
   "numpy>=2,<3",
   "pandas>=2.2,<3",
+  "python-multipart>=0.0.20,<1",
   "scikit-learn>=1.5,<2",
+  "sqlalchemy>=2,<3",
+  "uvicorn>=0.34,<1",
 ]
 
 [project.optional-dependencies]
 dev = [
+  "httpx>=0.28,<1",
   "pytest>=8,<10",
   "ruff>=0.8,<1",
 ]
 
 [project.scripts]
 prepare-data = "machine_risk.eda:main"
+run-app = "machine_risk.app:main"
 train-model = "machine_risk.train:main"
 
 [tool.setuptools]
