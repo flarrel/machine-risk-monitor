@@ -1,6 +1,6 @@
 # Project 1 Brief
 
-Status: approved; checkpoints 1–4 complete
+Status: complete; all five checkpoints verified
 
 ## Working title
 
