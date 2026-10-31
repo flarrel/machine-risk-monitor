@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Machine Risk Monitor</title>
+    <link rel="stylesheet" href="/static/app.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="eyebrow">Maintenance screening</p>
+          <h1>Machine Risk Monitor</h1>
+          <p class="intro">Estimate failure risk from current operating conditions.</p>
+        </div>
+        <span class="status">local</span>
+      </header>
+
+      {% if threshold_status == "provisional" %}
+      <aside class="notice">
+        The current decision cutoff is provisional until final evaluation. Results are decision
+        support only and must not trigger automatic maintenance actions.
+      </aside>
+      {% endif %}
+
+      <section class="layout">
+        <article class="panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Single reading</p>
+              <h2>Operating conditions</h2>
+            </div>
+          </div>
+
+          <form id="prediction-form">
+            <label>
+              Product type
+              <select name="product_type">
+                <option value="L">L</option>
+                <option value="M">M</option>
+                <option value="H">H</option>
+              </select>
+            </label>
+            <label>
+              Air temperature (K)
+              <input name="air_temperature_k" type="number" value="300.1" min="295.3" max="304.5" step="0.1" required>
+            </label>
+            <label>
+              Process temperature (K)
+              <input name="process_temperature_k" type="number" value="310.4" min="305.7" max="313.8" step="0.1" required>
+            </label>
+            <label>
+              Rotational speed (rpm)
+              <input name="rotational_speed_rpm" type="number" value="1500" min="1168" max="2886" required>
+            </label>
+            <label>
+              Torque (Nm)
+              <input name="torque_nm" type="number" value="42" min="3.8" max="76.6" step="0.1" required>
+            </label>
+            <label>
+              Tool wear (min)
+              <input name="tool_wear_min" type="number" value="120" min="0" max="253" required>
+            </label>
+            <button type="submit">Estimate risk</button>
+          </form>
+
+          <div id="result" class="result hidden" aria-live="polite"></div>
+        </article>
+
+        <article class="panel history-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Local history</p>
+              <h2>Recent estimates</h2>
+            </div>
+            <button id="refresh" class="secondary" type="button">Refresh</button>
+          </div>
+
+          <div class="metrics">
+            <div><span id="prediction-count">0</span><small>records</small></div>
+            <div><span id="average-risk">0%</span><small>average risk</small></div>
+            <div><span id="flagged-count">0</span><small>high risk</small></div>
+          </div>
+
+          <svg id="history-chart" viewBox="0 0 600 160" role="img" aria-label="Recent failure probabilities"></svg>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>ID</th><th>Type</th><th>Risk</th><th>Band</th><th>Source</th></tr>
+              </thead>
+              <tbody id="history-body"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel batch-panel">
+        <div>
+          <p class="eyebrow">Batch scoring</p>
+          <h2>Score a CSV file</h2>
+          <p>Upload up to 1,000 rows. The scored CSV downloads immediately.</p>
+        </div>
+        <form action="/api/predict/batch" method="post" enctype="multipart/form-data">
+          <input name="file" type="file" accept=".csv,text/csv" required>
+          <button type="submit">Score and download</button>
+        </form>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
