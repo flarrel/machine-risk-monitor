@@ -13,5 +13,4 @@ dist/
 
 data/raw/*.csv
 data/raw/*.zip
-artifacts/model/
 *.db

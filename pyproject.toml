@@ -22,6 +22,7 @@ dev = [
 
 [project.scripts]
 prepare-data = "machine_risk.eda:main"
+train-model = "machine_risk.train:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
