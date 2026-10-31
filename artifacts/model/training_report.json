@@ -173,8 +173,9 @@
     }
   },
   "cross_validation_folds": 5,
+  "decision_threshold": 0.274592,
   "development_rows": 8000,
-  "holdout_evaluated": false,
+  "holdout_evaluated": true,
   "holdout_rows": 2000,
   "selected_model": "random_forest",
   "selection_metric": "average_precision"

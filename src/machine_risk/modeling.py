@@ -8,8 +8,23 @@ from sklearn.compose import ColumnTransformer
 from sklearn.dummy import DummyClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import f1_score, make_scorer, precision_score, recall_score
-from sklearn.model_selection import StratifiedKFold, cross_validate, train_test_split
+from sklearn.metrics import (
+    average_precision_score,
+    confusion_matrix,
+    f1_score,
+    fbeta_score,
+    make_scorer,
+    precision_recall_curve,
+    precision_score,
+    recall_score,
+    roc_auc_score,
+)
+from sklearn.model_selection import (
+    StratifiedKFold,
+    cross_val_predict,
+    cross_validate,
+    train_test_split,
+)
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
@@ -19,6 +34,10 @@ RANDOM_STATE = 42
 HOLDOUT_FRACTION = 0.2
 NUMERIC_FEATURES = FEATURE_COLUMNS[1:]
 CATEGORICAL_FEATURES = ["Type"]
+
+
+def development_folds() -> StratifiedKFold:
+    return StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
 
 
 def split_dataset(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -93,7 +112,7 @@ def candidates() -> dict[str, Pipeline]:
 def compare_candidates(development: pd.DataFrame) -> tuple[dict, str]:
     features = development[FEATURE_COLUMNS]
     target = development[TARGET_COLUMN]
-    folds = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
+    folds = development_folds()
     scoring = {
         "average_precision": "average_precision",
         "roc_auc": "roc_auc",
@@ -125,3 +144,46 @@ def compare_candidates(development: pd.DataFrame) -> tuple[dict, str]:
     eligible = {name: value for name, value in results.items() if name != "dummy"}
     selected = max(eligible, key=lambda name: eligible[name]["average_precision"]["mean"])
     return results, selected
+
+
+def out_of_fold_probabilities(pipeline: Pipeline, development: pd.DataFrame) -> np.ndarray:
+    return cross_val_predict(
+        pipeline,
+        development[FEATURE_COLUMNS],
+        development[TARGET_COLUMN],
+        cv=development_folds(),
+        method="predict_proba",
+        n_jobs=1,
+    )[:, 1]
+
+
+def select_f2_threshold(target: pd.Series, probabilities: np.ndarray) -> tuple[float, float]:
+    precision, recall, thresholds = precision_recall_curve(target, probabilities)
+    numerator = 5 * precision[:-1] * recall[:-1]
+    denominator = 4 * precision[:-1] + recall[:-1]
+    scores = np.divide(
+        numerator,
+        denominator,
+        out=np.zeros_like(numerator),
+        where=denominator != 0,
+    )
+    best = int(np.argmax(scores))
+    return float(thresholds[best]), float(scores[best])
+
+
+def classification_metrics(target: pd.Series, probabilities: np.ndarray, threshold: float) -> dict:
+    predicted = probabilities >= threshold
+    tn, fp, fn, tp = confusion_matrix(target, predicted, labels=[0, 1]).ravel()
+    return {
+        "rows": len(target),
+        "positive_cases": int(target.sum()),
+        "prevalence": round(float(target.mean()), 6),
+        "threshold": round(float(threshold), 6),
+        "average_precision": round(float(average_precision_score(target, probabilities)), 6),
+        "roc_auc": round(float(roc_auc_score(target, probabilities)), 6),
+        "precision": round(float(precision_score(target, predicted, zero_division=0)), 6),
+        "recall": round(float(recall_score(target, predicted, zero_division=0)), 6),
+        "f1": round(float(f1_score(target, predicted, zero_division=0)), 6),
+        "f2": round(float(fbeta_score(target, predicted, beta=2, zero_division=0)), 6),
+        "confusion_matrix": {"tn": int(tn), "fp": int(fp), "fn": int(fn), "tp": int(tp)},
+    }

@@ -35,6 +35,9 @@ def validate_artifact(artifact: dict) -> None:
         raise ArtifactError("artifact target does not match the application schema")
     if not hasattr(artifact["pipeline"], "predict_proba"):
         raise ArtifactError("artifact pipeline must provide predict_proba")
+    threshold = artifact["decision_threshold"]
+    if threshold is not None and not 0 < threshold < 1:
+        raise ArtifactError("decision threshold must be between zero and one")
 
 
 def save_artifact(artifact: dict, destination: Path) -> None:
