@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import pandas as pd
-from matplotlib.figure import Figure
 
 from machine_risk.data import FEATURE_COLUMNS, ROOT, TARGET_COLUMN, load_dataset
+
+os.environ.setdefault("MPLCONFIGDIR", str(ROOT / ".mplconfig"))
+
+from matplotlib.figure import Figure
 
 OUTPUT_DIR = ROOT / "artifacts" / "eda"
 NUMERIC_FEATURES = FEATURE_COLUMNS[1:]

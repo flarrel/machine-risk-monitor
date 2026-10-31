@@ -12,12 +12,12 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
 
+from machine_risk.data import ROOT
 from machine_risk.database import PredictionStore
 from machine_risk.predictor import Predictor
 from machine_risk.schemas import BATCH_COLUMNS, MachineInput
 from machine_risk.train import MODEL_PATH
 
-ROOT = Path(__file__).resolve().parents[2]
 MAX_BATCH_ROWS = 1_000
 MAX_UPLOAD_BYTES = 2 * 1024 * 1024
 

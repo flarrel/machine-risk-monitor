@@ -17,12 +17,14 @@
         <span class="status">local</span>
       </header>
 
-      {% if threshold_status == "provisional" %}
       <aside class="notice">
+        {% if threshold_status == "provisional" %}
         The current decision cutoff is provisional until final evaluation. Results are decision
         support only and must not trigger automatic maintenance actions.
+        {% else %}
+        Results are decision support only and must not trigger automatic maintenance actions.
+        {% endif %}
       </aside>
-      {% endif %}
 
       <section class="layout">
         <article class="panel">

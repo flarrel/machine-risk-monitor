@@ -27,6 +27,7 @@ dev = [
 ]
 
 [project.scripts]
+evaluate-model = "machine_risk.evaluate:main"
 prepare-data = "machine_risk.eda:main"
 run-app = "machine_risk.app:main"
 train-model = "machine_risk.train:main"

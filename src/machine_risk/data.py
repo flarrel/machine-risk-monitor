@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import shutil
 import urllib.request
 import zipfile
@@ -14,7 +15,7 @@ DATASET_URL = (
 )
 DATASET_SHA256 = "dc6630cd9b1f0f853922fad78a1b6436570d3f1ec863f1dd5c4340ac56bc8a8e"
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(os.getenv("MACHINE_RISK_ROOT", Path(__file__).resolve().parents[2]))
 RAW_DIR = ROOT / "data" / "raw"
 RAW_CSV = RAW_DIR / "ai4i2020.csv"
 

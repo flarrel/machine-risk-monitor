@@ -1,0 +1,11 @@
+.git
+.venv
+__pycache__
+*.pyc
+*.db
+.pytest_cache
+.ruff_cache
+artifacts/eda
+artifacts/evaluation
+data
+tests

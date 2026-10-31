@@ -34,7 +34,7 @@ def test_home_and_health(client: TestClient) -> None:
     assert health.json() == {
         "status": "ok",
         "model": "random_forest",
-        "threshold_status": "provisional",
+        "threshold_status": "validated",
     }
 
 
@@ -44,7 +44,7 @@ def test_prediction_is_persisted(client: TestClient) -> None:
     assert response.status_code == 201
     prediction = response.json()
     assert 0 <= prediction["probability"] <= 1
-    assert prediction["threshold_status"] == "provisional"
+    assert prediction["threshold_status"] == "validated"
 
     history = client.get("/api/predictions").json()
     assert len(history) == 1

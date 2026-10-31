@@ -1,0 +1,37 @@
+{
+  "dummy_holdout": {
+    "average_precision": 0.034,
+    "roc_auc": 0.5
+  },
+  "holdout": {
+    "average_precision": 0.746562,
+    "confusion_matrix": {
+      "fn": 14,
+      "fp": 46,
+      "tn": 1886,
+      "tp": 54
+    },
+    "f1": 0.642857,
+    "f2": 0.725806,
+    "positive_cases": 68,
+    "precision": 0.54,
+    "prevalence": 0.034,
+    "recall": 0.794118,
+    "roc_auc": 0.969043,
+    "rows": 2000,
+    "threshold": 0.274592
+  },
+  "holdout_id_hash": "883d27c4c3a653dc1a9184ee2a2db402cc9367e38be97655ed3a6c83dff2ce58",
+  "limitations": [
+    "The dataset is synthetic and does not establish production performance.",
+    "The threshold prioritizes recall through F2 and may create avoidable inspections.",
+    "Probabilities are not a substitute for maintenance judgment or safety controls."
+  ],
+  "selected_model": "random_forest",
+  "threshold_selection": {
+    "data": "five-fold out-of-fold development predictions",
+    "development_f2": 0.750336,
+    "objective": "maximum F2",
+    "threshold": 0.274592
+  }
+}

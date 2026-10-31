@@ -48,6 +48,14 @@ def test_missing_fields_are_rejected(tmp_path: Path) -> None:
         save_artifact(payload, tmp_path / "invalid.joblib")
 
 
+def test_invalid_threshold_is_rejected(tmp_path: Path) -> None:
+    payload = artifact()
+    payload["decision_threshold"] = 1.2
+
+    with pytest.raises(ArtifactError, match="threshold"):
+        save_artifact(payload, tmp_path / "invalid.joblib")
+
+
 def test_trained_artifact_returns_probability() -> None:
     trained = load_artifact(ROOT / "artifacts" / "model" / "model.joblib")
     sample = pd.DataFrame(
